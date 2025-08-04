@@ -15,8 +15,9 @@ RUN opam install ocamlfind ounit2
 # Copier tout le code source
 COPY . .
 
-# Construire l'exécutable en utilisant la commande du README
-RUN make
+# Construire l'exécutable en utilisant la commande du README,
+# mais en l'exécutant dans l'environnement opam pour trouver les bons outils.
+RUN opam exec -- make
 
 # ---
 
