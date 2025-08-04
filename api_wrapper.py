@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Une page d'accueil simple qui explique comment utiliser l'API via le navigateur
+
 @app.route('/')
 def index():
     return """
@@ -17,11 +17,11 @@ def index():
     """
 
 # On modifie l'endpoint pour qu'il n'accepte QUE la méthode GET
-@app.route('/solve', methods=['GET'])
+@app.route('/marina', methods=['GET'])
 def solve_proposition():
     # On récupère directement le paramètre "solve" de l'URL.
     # Plus besoin de vérifier si la méthode est GET ou POST.
-    prop = request.args.get('solve')
+    prop = request.args.get('laza')
 
     # Si le paramètre est manquant, on renvoie une erreur claire.
     if not prop:
