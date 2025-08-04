@@ -1,54 +1,54 @@
 import subprocess
 from flask import Flask, request, jsonify
 
-# Initialiser l'application Flask
 app = Flask(__name__)
 
-@app.route('/solve', methods=['POST'])
+# Une page d'accueil simple qui explique comment utiliser l'API via le navigateur
+@app.route('/')
+def index():
+    return """
+    <h1>API du SAT Solver Marina</h1>
+    <p>Cette API accepte uniquement les requêtes GET sur l'endpoint /solve.</p>
+    <p><strong>Exemple d'utilisation dans votre navigateur :</strong></p>
+    <p>Cliquez sur ce lien pour tester : 
+       <a href="/solve?solve=(a%26b|c)-%3Ed<->~e">/solve?solve=(a&b|c)->d<->~e</a>
+    </p>
+    <p>Pour utiliser, ajoutez simplement <code>?solve=VOTRE_PROPOSITION</code> à la fin de l'URL /solve.</p>
+    """
+
+# On modifie l'endpoint pour qu'il n'accepte QUE la méthode GET
+@app.route('/solve', methods=['GET'])
 def solve_proposition():
-    """
-    Endpoint pour résoudre une proposition logique.
-    Attend une requête POST avec un JSON contenant la clé "proposition".
-    Exemple: curl -X POST -H "Content-Type: application/json" -d '{"proposition": "a & ~a"}' http://localhost:8080/solve
-    """
-    # Récupérer le JSON de la requête
-    data = request.get_json()
-    if not data or 'proposition' not in data:
-        return jsonify({"error": "La requête doit être un JSON avec une clé 'proposition'."}), 400
+    # On récupère directement le paramètre "solve" de l'URL.
+    # Plus besoin de vérifier si la méthode est GET ou POST.
+    prop = request.args.get('solve')
 
-    prop = data['proposition']
+    # Si le paramètre est manquant, on renvoie une erreur claire.
+    if not prop:
+        return jsonify({"error": "Proposition non fournie. Veuillez utiliser le paramètre ?solve=... dans l'URL."}), 400
 
-    # Chemin vers l'exécutable marina dans le conteneur
+    # Le reste de la logique pour appeler l'exécutable marina est inchangé.
     marina_executable = "./marina"
-
     try:
-        # Exécuter la commande marina en passant la proposition comme argument
-        # On capture la sortie standard (stdout) et les erreurs (stderr)
         result = subprocess.run(
             [marina_executable, prop],
             capture_output=True,
-            text=True,  # Pour obtenir stdout/stderr en tant que chaîne de caractères
-            check=True  # Pour lever une exception si la commande échoue (code de sortie non nul)
+            text=True,
+            check=True
         )
-
-        # Renvoyer la sortie de la commande en cas de succès
+        # On renvoie le résultat au format JSON, que le navigateur affichera.
         return jsonify({
             "status": "success",
             "output": result.stdout.strip()
         })
-
     except subprocess.CalledProcessError as e:
-        # Si marina retourne une erreur (ex: syntaxe incorrecte), on la renvoie
         return jsonify({
             "status": "error",
             "error_message": "Erreur lors de l'exécution de marina.",
             "details": e.stderr.strip()
-        }), 400 # Bad Request, car la proposition était probablement mauvaise
-        
+        }), 400
     except FileNotFoundError:
-        # Au cas où l'exécutable ne serait pas trouvé
         return jsonify({"error": "L'exécutable 'marina' n'a pas été trouvé."}), 500
 
 if __name__ == '__main__':
-    # Lancer le serveur sur le port 8080, accessible depuis l'extérieur du conteneur
     app.run(host='0.0.0.0', port=8080)
