@@ -1,13 +1,15 @@
 # ÉTAPE 1: Builder - Compiler l'exécutable OCaml 'marina'
-# On part d'une image OCaml/Opam complète
-FROM ocaml/opam:ocaml-4.14 AS builder
+# On part d'une image OCaml/Opam complète avec un tag qui existe
+FROM ocaml/opam:debian-ocaml-4.14 AS builder
 
 # Mettre à jour les dépendances système
-RUN sudo apt-get update && sudo apt-get install -y make
+# 'make' est souvent déjà inclus dans ces images, mais on s'en assure.
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends make
 
 WORKDIR /app
 
 # Installer les dépendances OCaml listées dans le README
+# 'ocamlfind' est généralement déjà là, mais on l'inclut par sécurité.
 RUN opam install ocamlfind ounit2
 
 # Copier tout le code source
@@ -25,7 +27,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Installer Flask, le seul prérequis de notre wrapper API
-RUN pip install Flask
+RUN pip install --no-cache-dir Flask
 
 # Copier l'exécutable 'marina' compilé depuis l'étape de build
 COPY --from=builder /app/marina ./marina
