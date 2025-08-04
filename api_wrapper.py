@@ -11,7 +11,7 @@ def index():
     <p>Cette API accepte uniquement les requêtes GET sur l'endpoint /solve.</p>
     <p><strong>Exemple d'utilisation dans votre navigateur :</strong></p>
     <p>Cliquez sur ce lien pour tester : 
-       <a href="/solve?solve=(a%26b|c)-%3Ed<->~e">/solve?solve=(a&b|c)->d<->~e</a>
+       <a href="/marina?laza=(a%26b|c)-%3Ed<->~e">/solve?solve=(a&b|c)->d<->~e</a>
     </p>
     <p>Pour utiliser, ajoutez simplement <code>?solve=VOTRE_PROPOSITION</code> à la fin de l'URL /solve.</p>
     """
