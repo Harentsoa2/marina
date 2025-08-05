@@ -1,7 +1,7 @@
 
 FROM ocaml/opam:ubuntu-24.04-ocaml-5.4 as builder
 
-RUN sudo apt-get update && sudo apt-get install -y m4 build-essential
+RUN sudo apt-get update 
 
 WORKDIR /app
 
