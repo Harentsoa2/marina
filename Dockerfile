@@ -1,4 +1,4 @@
-FROM ubuntu-24.04-ocaml-5.4 as Builder
+FROM ocaml/opam:ubuntu-24.04_ocaml-5.1 as Builder
 
 RUN apt-get update 
 
