@@ -1,6 +1,6 @@
 FROM ocaml/opam:ubuntu-24.04-ocaml-5.4 as Builder
 
-RUN apt-get update 
+RUN sudo apt-get update 
 
 WORKDIR /app
 
