@@ -1,20 +1,21 @@
-FROM ocaml/opam:ubuntu-24.04-ocaml-5.4 as Builder
 
-RUN sudo apt-get update 
+FROM ocaml/opam:ubuntu-24.04-ocaml-5.4 as builder
+
+RUN sudo apt-get update && sudo apt-get install -y m4 build-essential
 
 WORKDIR /app
 
-Copy . .
+COPY . .
 
-RUN opam install ocamlfind ounit2
+RUN opam install -y ocamlfind ounit2
 
-RUN make
+RUN eval $(opam env) && make
 
 FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY --from=Builder /app/marina ./marina
+COPY --from=builder /app/marina ./marina
 
 RUN pip install flask
 
